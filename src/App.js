@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { MdRemoveCircleOutline } from "react-icons/md";
+import TodoList from "./TodoList";
 
-function App() {
+const App = () => {
+  // const count = 0;
   const [todo, setTodo] = useState("");
   const [list, setList] = useState([]);
 
@@ -14,10 +15,34 @@ function App() {
     if (todo.length === 0) {
       return alert("add long");
     }
-    setList([...list, todo]);
+    setList([
+      ...list,
+      {
+        id: list.length,
+        text: todo,
+        done: false,
+      },
+    ]);
+
     setTodo("");
     //setstate는 비동기 함수.
   };
+  const onDelete = (id) => {
+    setList(list.filter((item) => item.id !== id));
+    // 같은 아이디만 삭제
+  };
+  const onComplete = (id) => {
+    //같은 아이디를 찾는다 -> 데이터를 바꿔준다
+    setList(
+      list.map((item) => {
+        if (item.id === id) {
+          item.done = !item.done; // 토글로 참,거짓 바꿔주기
+        }
+        return item; // 왜 그대로 반환해야 하는지?
+      })
+    );
+  };
+
   return (
     <div
       style={{
@@ -40,37 +65,9 @@ function App() {
         />
         <button onClick={onClick}>Add Todo</button>
       </div>
-      <div>
-        <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-          {list.map((todoitem) => {
-            return (
-              <li
-                style={{
-                  fontSize: "18px",
-                  display: "flex",
-                  alignItems: "center",
-                  borderBottom: "1px solid #aaa",
-                  padding: "0 15px",
-                }}
-              >
-                {" "}
-                <p style={{ flex: 1 }}>{todoitem} </p>
-                <span>
-                  <MdRemoveCircleOutline
-                    style={{
-                      fontSize: "22px",
-                      color: "red",
-                      cursor: "pointer",
-                    }}
-                  />
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      <TodoList list={list} onDelete={onDelete} onComplete={onComplete} />
     </div>
   );
-}
+};
 
 export default App;

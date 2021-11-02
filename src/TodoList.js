@@ -2,9 +2,13 @@ import {
   MdRemoveCircleOutline,
   MdCheckBoxOutlineBlank,
   MdCheckBox,
+  MdCreate,
 } from "react-icons/md";
+import { useState } from "react";
 
-const TodoList = ({ list, onDelete, onComplete }) => {
+const TodoList = ({ list, onDelete, onComplete, onEdit, handleUpdate }) => {
+  const [editText, setEditText] = useState("");
+
   return (
     <div>
       <ul style={{ listStyle: "none", paddingLeft: 0 }}>
@@ -34,9 +38,20 @@ const TodoList = ({ list, onDelete, onComplete }) => {
                   textDecoration: todoitem.done ? "line-through" : "none",
                 }}
               >
-                {todoitem.text}{" "}
+                {todoitem.flag ? (
+                  todoitem.text // 기존 todo value
+                ) : (
+                  <input
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                  />
+                  //업데이트 된 데이터를 바꿔줌
+                )}
               </p>
-              <span onClick={() => onDelete(todoitem.id)}>
+              <span
+                onClick={() => onDelete(todoitem.id)}
+                style={{ display: "inline-block", marginRight: "10px" }}
+              >
                 <MdRemoveCircleOutline
                   style={{
                     fontSize: "22px",
@@ -44,6 +59,18 @@ const TodoList = ({ list, onDelete, onComplete }) => {
                     cursor: "pointer",
                   }}
                 />
+              </span>
+              <span
+                onClick={() => {
+                  // flag가 false => true가 될 때 handleUpdate를 한다
+                  if (!todoitem.flag) {
+                    handleUpdate(todoitem.id, editText);
+                    setEditText("");
+                  }
+                  onEdit(todoitem.id);
+                }}
+              >
+                <MdCreate />
               </span>
             </li>
           );

@@ -2,7 +2,6 @@ import { useState } from "react";
 import TodoList from "./TodoList";
 
 const App = () => {
-  // const count = 0;
   const [todo, setTodo] = useState("");
   const [list, setList] = useState([]);
 
@@ -21,6 +20,7 @@ const App = () => {
         id: list.length,
         text: todo,
         done: false,
+        flag: true,
       },
     ]);
 
@@ -41,6 +41,30 @@ const App = () => {
         return item; // 왜 그대로 반환해야 하는지?
       })
     );
+  };
+
+  const onEdit = (id) => {
+    //list.text = todo
+    //list의 li가 input으로 ...
+    //바뀐 input의 value = newtodo 로
+    setList(
+      list.map((item) => {
+        if (item.id === id) {
+          item.flag = !item.flag;
+        }
+        return item;
+      })
+    );
+  };
+
+  const handleUpdate = (id, text) => {
+    const newTodos = list.map((todo) => {
+      if (todo.id === id) {
+        todo.text = text;
+      }
+      return todo;
+    });
+    setList(newTodos);
   };
 
   return (
@@ -65,7 +89,13 @@ const App = () => {
         />
         <button onClick={onClick}>Add Todo</button>
       </div>
-      <TodoList list={list} onDelete={onDelete} onComplete={onComplete} />
+      <TodoList
+        list={list}
+        onDelete={onDelete}
+        onComplete={onComplete}
+        onEdit={onEdit}
+        handleUpdate={handleUpdate}
+      />
     </div>
   );
 };

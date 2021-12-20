@@ -2,29 +2,40 @@ import { useState } from "react";
 import TodoList from "./TodoList";
 
 const App = () => {
-  const [todo, setTodo] = useState("");
-  const [list, setList] = useState([]);
+  const [todo, setTodo] = useState(""); // 해야할일 1개
+  const [list, setList] = useState([]); // 해야할일 객체를 모아놓은 배열
+  const [id, setId] = useState(0);
 
   const onChange = (e) => {
     // 배열 형태로 추가하기
     // 기존의 배열은 바뀌지 않도록
     setTodo(e.target.value);
   };
-  const onClick = () => {
+
+  const AddTodoItem = () => {
     if (todo.length === 0) {
       return alert("add long");
     }
     setList([
       ...list,
       {
-        id: list.length,
-        text: todo,
-        done: false,
-        flag: true,
+        id: id,
+        title: todo,
+        is_completed: false,
+        is_edit_button: false,
       },
     ]);
-
     setTodo("");
+    setId(id + 1);
+  };
+
+  const AddKeyPress = (e) => {
+    if (e.key === "Enter") {
+      AddTodoItem();
+    }
+  };
+  const AddButtonClick = () => {
+    AddTodoItem();
     //setstate는 비동기 함수.
   };
   const onDelete = (id) => {
@@ -36,12 +47,17 @@ const App = () => {
     setList(
       list.map((item) => {
         if (item.id === id) {
-          item.done = !item.done; // 토글로 참,거짓 바꿔주기
+          item.is_completed = !item.is_completed; // 토글로 참,거짓 바꿔주기
         }
         return item; // 왜 그대로 반환해야 하는지?
       })
     );
   };
+
+  //수정 기능
+  // [ ] 수정버튼을 누르면 input 창이 나타난다
+  // [ ] input 창은 기존의 내용이 담겨있어야 한다
+  // [ ] input에 새로운 값을 넣고 버튼을 누르면 todo.title이 바뀐다
 
   const onEdit = (id) => {
     //list.text = todo
@@ -50,17 +66,17 @@ const App = () => {
     setList(
       list.map((item) => {
         if (item.id === id) {
-          item.flag = !item.flag;
+          item.is_edit_button = !item.is_edit_button;
         }
         return item;
       })
     );
   };
 
-  const handleUpdate = (id, text) => {
+  const handleUpdate = (id, title) => {
     const newTodos = list.map((todo) => {
       if (todo.id === id) {
-        todo.text = text;
+        todo.title = title;
       }
       return todo;
     });
@@ -86,8 +102,11 @@ const App = () => {
           value={todo}
           onChange={onChange}
           placeholder="Add a todo item"
+          onKeyPress={(e) => {
+            AddKeyPress(e);
+          }}
         />
-        <button onClick={onClick}>Add Todo</button>
+        <button onClick={AddButtonClick}>Add Todo</button>
       </div>
       <TodoList
         list={list}

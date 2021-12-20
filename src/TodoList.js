@@ -30,22 +30,27 @@ const TodoList = ({ list, onDelete, onComplete, onEdit, handleUpdate }) => {
                 style={{ marginRight: "10px", cursor: "pointer" }}
                 onClick={() => onComplete(todoitem.id)}
               >
-                {todoitem.done ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
+                {todoitem.is_completed ? (
+                  <MdCheckBox />
+                ) : (
+                  <MdCheckBoxOutlineBlank />
+                )}
               </span>
               <p
                 style={{
                   flex: 1,
-                  textDecoration: todoitem.done ? "line-through" : "none",
+                  textDecoration: todoitem.is_completed
+                    ? "line-through"
+                    : "none",
                 }}
               >
-                {todoitem.flag ? (
-                  todoitem.text // 기존 todo value
-                ) : (
+                {todoitem.is_edit_button ? (
                   <input
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
-                  />
-                  //업데이트 된 데이터를 바꿔줌
+                  /> //업데이트 된 데이터를 바꿔줌
+                ) : (
+                  todoitem.title // 기존 todo value
                 )}
               </p>
               <span
@@ -62,8 +67,7 @@ const TodoList = ({ list, onDelete, onComplete, onEdit, handleUpdate }) => {
               </span>
               <span
                 onClick={() => {
-                  // flag가 false => true가 될 때 handleUpdate를 한다
-                  if (!todoitem.flag) {
+                  if (todoitem.is_edit_button) {
                     handleUpdate(todoitem.id, editText);
                     setEditText("");
                   }
